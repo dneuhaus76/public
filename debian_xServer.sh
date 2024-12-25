@@ -130,6 +130,14 @@ LANG="de_CH.UTF-8"
 LANGUAGE="de_CH:de"
 EOT 
 
+# sources
+cat <<EOT >/mnt/etc/apt/sources.list
+deb ${mySite} ${myDist} main contrib non-free-firmware
+deb-src ${mySite} ${myDist} main contrib non-free-firmware
+deb http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
+deb-src http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
+EOT
+
 # hostname
 echo "${myComputername}" >/mnt/etc/hostname
 
@@ -154,20 +162,11 @@ ls -l /etc/localtime | awk '{print \$NF}'
 EOT
 
 # Chroote in das Debian-System
-LANG=$LANG chroot /mnt /bin/bash <<EOFCHR
+LANG=$LANG chroot /mnt /bin/bash <<EOT
 # Innerhalb des Chroots
-
-# sources
-cat <<EOT >/etc/apt/sources.list
-deb ${mySite} ${myDist} main contrib non-free-firmware
-deb-src ${mySite} ${myDist} main contrib non-free-firmware
-deb http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
-deb-src http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
-EOT
 
 # Aktualisiere apt
 apt update
-apt install firmware-linux
 
 # add a user +sudo and a pw
 adduser --disabled-password --gecos "" $myUsername
@@ -195,7 +194,7 @@ apt install -yqq network-manager
 systemctl enable NetworkManager.service
 
 # Ende des Chroots
-EOFCHR
+EOT
 
 #MyStage 2 Chroot
 #Check

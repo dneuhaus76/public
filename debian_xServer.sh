@@ -5,7 +5,7 @@ echo text
 #https://www.debian.org/releases/buster/amd64/apds03.de.html
 #setxkbmap -layout ch
 #scp benutzer@192.168.1.108:/home/benutzer/Schreibtisch/debian_xServer.sh ~
-#https://github.com/dneuhaus76/public/blob/main/debian_xServer.sh
+#https://raw.githubusercontent.com/dneuhaus76/public/refs/heads/main/debian_xServer.sh
 # sed -i 's/\r//' debian_xServer.sh
 #if [ $? -ne 0 ]; then
 #read -p "Continue (y/n): " continue_response
@@ -19,10 +19,10 @@ export mySite="http://ftp.ch.debian.org/debian/"
 export LANG="de_CH.UTF-8"
 export DEBIAN_FRONTEND=noninteractive
 
-# check current mode & list drives 
-echo;[ -d /sys/firmware/efi ] && echo "EFI boot" || echo "Legacy boot"
+# check current mode 
+echo;[ -d /sys/firmware/efi ] && echo "EFI boot on HDD" || echo "Legacy boot on HDD"
 echo; lsblk -l
-echo;echo "Enter install Device name"
+echo "Enter Device name (/dev/x)"
 read -r myDev
 #echo "Enter Distribution name (default is ${myDist})"
 #read -r myDist
@@ -154,7 +154,7 @@ ls -l /etc/localtime | awk '{print \$NF}'
 EOT
 
 # Chroote in das Debian-System
-LANG=$LANG chroot /mnt /bin/bash <<EOCHR
+LANG=$LANG chroot /mnt /bin/bash <<EOFCHR
 # Innerhalb des Chroots
 
 # sources
@@ -167,6 +167,7 @@ EOT
 
 # Aktualisiere apt
 apt update
+apt install firmware-linux
 
 # add a user +sudo and a pw
 adduser --disabled-password --gecos "" $myUsername
@@ -194,7 +195,7 @@ apt install -yqq network-manager
 systemctl enable NetworkManager.service
 
 # Ende des Chroots
-EOT
+EOFCHR
 
 #MyStage 2 Chroot
 #Check
@@ -233,7 +234,7 @@ echo "final chroot checks"
 echo
 
 # Ende des Chroots
-EOCHR
+EOT
 
 	# Bereinige und unmounte
 	umount -l /mnt/sys

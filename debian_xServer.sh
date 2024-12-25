@@ -5,6 +5,7 @@ echo text
 #https://www.debian.org/releases/buster/amd64/apds03.de.html
 #setxkbmap -layout ch
 #scp benutzer@192.168.1.108:/home/benutzer/Schreibtisch/debian_xServer.sh ~
+#https://github.com/dneuhaus76/public/blob/main/debian_xServer.sh
 # sed -i 's/\r//' debian_xServer.sh
 #if [ $? -ne 0 ]; then
 #read -p "Continue (y/n): " continue_response
@@ -18,10 +19,11 @@ export mySite="http://ftp.ch.debian.org/debian/"
 export LANG="de_CH.UTF-8"
 export DEBIAN_FRONTEND=noninteractive
 
-# check current mode 
-echo;[ -d /sys/firmware/efi ] && echo "EFI boot on HDD" || echo "Legacy boot on HDD"
-#echo "Enter Device name (default is ${myDev})"
-#read -r myDev
+# check current mode & list drives 
+echo;[ -d /sys/firmware/efi ] && echo "EFI boot" || echo "Legacy boot"
+echo; lsblk -l
+echo;echo "Enter install Device name"
+read -r myDev
 #echo "Enter Distribution name (default is ${myDist})"
 #read -r myDist
 
@@ -128,14 +130,6 @@ LANG="de_CH.UTF-8"
 LANGUAGE="de_CH:de"
 EOT 
 
-# sources
-cat <<EOT >/mnt/etc/apt/sources.list
-deb ${mySite} ${myDist} main contrib non-free-firmware
-deb-src ${mySite} ${myDist} main contrib non-free-firmware
-deb http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
-deb-src http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
-EOT
-
 # hostname
 echo "${myComputername}" >/mnt/etc/hostname
 
@@ -160,8 +154,16 @@ ls -l /etc/localtime | awk '{print \$NF}'
 EOT
 
 # Chroote in das Debian-System
-LANG=$LANG chroot /mnt /bin/bash <<EOT
+LANG=$LANG chroot /mnt /bin/bash <<EOCHR
 # Innerhalb des Chroots
+
+# sources
+cat <<EOT >/etc/apt/sources.list
+deb ${mySite} ${myDist} main contrib non-free-firmware
+deb-src ${mySite} ${myDist} main contrib non-free-firmware
+deb http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
+deb-src http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
+EOT
 
 # Aktualisiere apt
 apt update
@@ -231,7 +233,7 @@ echo "final chroot checks"
 echo
 
 # Ende des Chroots
-EOT
+EOCHR
 
 	# Bereinige und unmounte
 	umount -l /mnt/sys

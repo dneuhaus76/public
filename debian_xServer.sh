@@ -131,11 +131,11 @@ LANGUAGE="de_CH:de"
 EOT 
 
 # sources
-cat <<EOT >/mnt/etc/apt/sources.list
-deb ${mySite} ${myDist} main contrib non-free-firmware
-deb-src ${mySite} ${myDist} main contrib non-free-firmware
-deb http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
-deb-src http://security.debian.org/debian-security/ ${myDist}-security main contrib non-free-firmware
+cat <<EOT >/etc/apt/sources.list
+deb ${mySite} ${myDist} main non-free-firmware
+deb-src ${mySite} ${myDist} main non-free-firmware
+deb http://security.debian.org/debian-security/ ${myDist}-security main non-free-firmware
+deb-src http://security.debian.org/debian-security/ ${myDist}-security main non-free-firmware
 EOT
 
 # hostname
@@ -162,7 +162,7 @@ ls -l /etc/localtime | awk '{print \$NF}'
 EOT
 
 # Chroote in das Debian-System
-LANG=$LANG chroot /mnt /bin/bash <<EOT
+LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
 # Innerhalb des Chroots
 
 # Aktualisiere apt
@@ -178,7 +178,7 @@ EOP
 usermod -aG adm,audio,cdrom,video,netdev,plugdev,users $myUsername
 
 # must have
-apt install -yqq nano sudo ssh locales console-setup mc
+apt install -yqq firmware-linux firmware-misc-nonfree nano sudo ssh locales console-setup mc
 unlink /etc/localtime; ln -s /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 locale-gen ${LANG}
 dpkg-reconfigure locales
@@ -194,11 +194,11 @@ apt install -yqq network-manager
 systemctl enable NetworkManager.service
 
 # Ende des Chroots
-EOT
+CHROOT_SCRIPT
 
 #MyStage 2 Chroot
 #Check
-LANG=$LANG chroot /mnt /bin/bash <<EOT
+LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
 # Installiere meine Applikationen - fix für connman
 apt install -yqq xserver-xorg-core lightdm lightdm-settings slick-greeter lxqt xrdp chromium thunderbird libwebkit2gtk-4.0-37 
 apt install -yqq --no-install-recommends xserver-xorg network-manager-gnome
@@ -233,7 +233,7 @@ echo "final chroot checks"
 echo
 
 # Ende des Chroots
-EOT
+CHROOT_SCRIPT
 
 	# Bereinige und unmounte
 	umount -l /mnt/sys

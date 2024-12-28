@@ -179,7 +179,7 @@ EOP
 usermod -aG adm,audio,cdrom,video,netdev,plugdev,users $myUsername
 
 # must have
-apt install -yqq firmware-linux firmware-misc-nonfree nano sudo ssh locales console-setup mc
+apt install -yqq nano sudo ssh locales console-setup mc
 unlink /etc/localtime; ln -s /usr/share/zoneinfo/Europe/Zurich /etc/localtime
 locale-gen ${LANG}
 dpkg-reconfigure locales
@@ -251,43 +251,9 @@ MyDebianChroot
 umount -R /mnt
 
 #Check
-read -p "poweroff? (y/n): " continue_response
-if [ $continue_response == "y" ]; then
+#read -p "poweroff? (y/n): " continue_response
+#if [ $continue_response == "y" ]; then
 	poweroff
-fi
-
-#Verschobene
-#Check for device
-#if [ ! -b "$myDev" ]; then
-#	echo "Error: Device $myDev does not exist or is not a block device."
-#	exit 1
 #fi
-#echo; lshw -class disk -short; echo
-#equivalent with parted
 
-#parted -s "$myDev" mklabel gpt
-#parted -s "$myDev" mkpart primary fat32 1MiB 512MiB
-#parted -s "$myDev" mkpart primary ext4 512MiB 100%
 
-#apt install -yq shim-signed
-#update-secureboot-policy --new-key
-
-	#echo; echo "bash for corrections... (ctrl+D or exit)"; echo
-	#LANG=$LANG chroot /mnt /bin/bash
-	
-	#chmod +x /mnt/chrootscript.sh
-	#LANG=$LANG chroot /mnt ./chrootscript.sh
-	
-# Installiere minimalen LXQt-Desktop
-#apt install -y --no-install-recommends xserver-xorg xserver-xorg-core lightdm lightdm-settings slick-greeter lxqt-core #lxqt-policykit lxqt-qtplugin lxqt-themes lxqt-admin lxqt-config cmst
-#apt install -y chromium thunderbird libwebkit2gtk-4.0-37 lxqt liblxqt-l10n lxqt-session-l10n lxqt-panel-l10n lxqt-config-l10n lxqt-notificationd-l10n lxqt-policykit-l10n lxqt-runner-l10n lxqt-sudo-l10n lxqt-globalkeys-l10n
-#apt clean
-#getent group
-	
-#dpkg --configure -a
-#apt autoremove
-#apt clean
-#Create swapFile
-#fallocate -l ${myPageFile} /mnt/swapfile
-#chmod 600 /mnt/swapfile
-#mkswap /mnt/swapfile

@@ -86,7 +86,7 @@ EOT
 	fallocate -l ${myPageFile} /mnt/swapfile
 	chmod 600 /mnt/swapfile
 	mkswap /mnt/swapfile
-	echo "" >>/mnt/etc/fstab
+	#echo "" >>/mnt/etc/fstab
 
     #Check
     if [ $myDebugMode == "y" ]; then
@@ -130,14 +130,6 @@ LANG="de_CH.UTF-8"
 LANGUAGE="de_CH:de"
 EOT 
 
-# sources
-cat <<EOT >/etc/apt/sources.list
-deb ${mySite} ${myDist} main non-free-firmware
-deb-src ${mySite} ${myDist} main non-free-firmware
-deb http://security.debian.org/debian-security/ ${myDist}-security main non-free-firmware
-deb-src http://security.debian.org/debian-security/ ${myDist}-security main non-free-firmware
-EOT
-
 # hostname
 echo "${myComputername}" >/mnt/etc/hostname
 
@@ -165,8 +157,17 @@ EOT
 LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
 # Innerhalb des Chroots
 
+# sources
+cat <<EOT >/etc/apt/sources.list
+deb ${mySite} ${myDist} main non-free-firmware
+deb-src ${mySite} ${myDist} main non-free-firmware
+deb http://security.debian.org/debian-security/ ${myDist}-security main non-free-firmware
+deb-src http://security.debian.org/debian-security/ ${myDist}-security main non-free-firmware
+EOT
+
 # Aktualisiere apt
 apt update
+apt install -yqq firmware-linux firmware-linux-free firmware-linux-nonfree firmware-misc-nonfree
 
 # add a user +sudo and a pw
 adduser --disabled-password --gecos "" $myUsername

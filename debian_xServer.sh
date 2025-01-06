@@ -17,6 +17,7 @@ export myComputername="lxqtdebian"
 export myPageFile="3G"
 export mySite="http://ftp.ch.debian.org/debian/"
 export LANG="de_CH.UTF-8"
+export LANGUAGE="de_CH:de"
 export DEBIAN_FRONTEND=noninteractive
 
 # disable ipv6 during this installation
@@ -130,10 +131,10 @@ mount --rbind /dev /mnt/dev
 LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
 # Innerhalb des Chroots
 # keyboard
-echo "de_CH.UTF-8 UTF-8" >> /etc/locale.gen
+echo "${LANG} UTF-8" >> /etc/locale.gen
 cat <<EOT >/etc/default/locale
-LANG="de_CH.UTF-8"
-LANGUAGE="de_CH:de"
+LANG="${LANG}"
+LANGUAGE="${LANGUAGE}"
 EOT 
 
 # hostname
@@ -153,10 +154,10 @@ ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 EOT
 
-# my login config
-cat <<EOT >>/etc/bash.bashrc
-echo; echo "\$USER (\$LANGUAGE) on \$HOSTNAME"; hostname -I; id
-ls -l /etc/localtime | awk '{print \$NF}'
+# my login config no varialbe translation
+cat <<'EOT' >>/etc/bash.bashrc
+echo; echo "$USER ($LANGUAGE) on $HOSTNAME"; hostname -I; id
+ls -l /etc/localtime | awk '{print $NF}'
 EOT
 
 # sources

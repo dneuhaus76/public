@@ -19,6 +19,10 @@ export mySite="http://ftp.ch.debian.org/debian/"
 export LANG="de_CH.UTF-8"
 export DEBIAN_FRONTEND=noninteractive
 
+# disable ipv6 during this installation
+sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
 # check current mode 
 echo;[ -d /sys/firmware/efi ] && echo "EFI boot on HDD" || echo "Legacy boot on HDD"
 echo; lsblk -l

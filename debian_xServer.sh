@@ -126,19 +126,21 @@ mount --types proc /proc /mnt/proc
 mount --rbind /sys /mnt/sys
 mount --rbind /dev /mnt/dev
 
-## config into chroot 
+# Chroote in das Debian-System
+LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
+# Innerhalb des Chroots
 # keyboard
-echo "de_CH.UTF-8 UTF-8" >> /mnt/etc/locale.gen
-cat <<EOT >/mnt/etc/default/locale
+echo "de_CH.UTF-8 UTF-8" >> /etc/locale.gen
+cat <<EOT >/etc/default/locale
 LANG="de_CH.UTF-8"
 LANGUAGE="de_CH:de"
 EOT 
 
 # hostname
-echo "${myComputername}" >/mnt/etc/hostname
+echo "${myComputername}" >/etc/hostname
 
 # hosts
-cat  <<EOT >/mnt/etc/hosts
+cat  <<EOT >/etc/hosts
 127.0.0.1 localhost
 127.0.1.1 ${myComputername}
 
@@ -152,14 +154,10 @@ ff02::3 ip6-allhosts
 EOT
 
 # my login config
-cat <<EOT >>/mnt/etc/bash.bashrc
+cat <<EOT >>/etc/bash.bashrc
 echo; echo "\$USER (\$LANGUAGE) on \$HOSTNAME"; hostname -I; id
 ls -l /etc/localtime | awk '{print \$NF}'
 EOT
-
-# Chroote in das Debian-System
-LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
-# Innerhalb des Chroots
 
 # sources
 cat <<EOT >/etc/apt/sources.list
@@ -257,7 +255,7 @@ umount -R /mnt
 #Check
 #read -p "poweroff? (y/n): " continue_response
 #if [ $continue_response == "y" ]; then
-	poweroff
+	poweroff -p
 #fi
 
 

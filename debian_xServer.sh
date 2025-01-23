@@ -127,6 +127,10 @@ mount --types proc /proc /mnt/proc
 mount --rbind /sys /mnt/sys
 mount --rbind /dev /mnt/dev
 
+# treiber von live cd kopieren
+cp -r /lib/firmware /mnt/lib/firmware
+cp -r /lib/modules /mnt/lib/modules
+
 # Chroote in das Debian-System
 LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
 # Innerhalb des Chroots

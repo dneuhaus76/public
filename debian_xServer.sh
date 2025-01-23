@@ -158,12 +158,6 @@ ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 EOT
 
-# my login config no varialbe translation
-cat <<'EOT' >>/etc/bash.bashrc
-echo; echo "$USER ($LANGUAGE) on $HOSTNAME"; hostname -I; id
-ls -l /etc/localtime | awk '{print $NF}'
-EOT
-
 # sources
 cat <<EOT >/etc/apt/sources.list
 deb ${mySite} ${myDist} main non-free-firmware

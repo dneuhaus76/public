@@ -1,10 +1,15 @@
 #!/bin/bash
 
 # my login config no varialbe translation
-cat <<'EOT' >>/etc/bash.bashrc
+file=/etc/bash.bashrc
+if grep -Fq "\$USER (\$LANGUAGE)" "$file"; then
+echo "Eintrag bereits vorhanden."
+else
+cat <<'EOT' >>$file 
 echo; echo "$USER ($LANGUAGE) on $HOSTNAME"; hostname -I; id
 ls -l /etc/localtime | awk '{print $NF}'
 EOT
+fi
 
 file=/etc/xdg/lxqt/lxqt.conf
 cp -nv $file ${file}.orig
@@ -20,7 +25,7 @@ EOT
 
 file=/etc/xdg/lxqt/panel.conf
 cp -nv $file ${file}.orig
-cat <<EOT > $file
+cat <<EOT >$file
 [General]
 iconTheme=Papirus-Dark
 
@@ -56,14 +61,14 @@ EOT
 
 file=/etc/xdg/lxqt/lxqt-powermanagement.conf
 cp -nv $file ${file}.orig
-cat <<EOT > $file
+cat <<EOT >$file
 [General]
 iconType=4
 EOT
 
 file=/etc/xdg/pcmanfm-qt/lxqt/settings.conf
 cp -nv $file ${file}.orig
-cat <<EOT > $file
+cat <<EOT >$file
 [Desktop]
 DesktopShortcuts=Home, Trash
 Wallpaper=/usr/share/lxqt/wallpapers/plasma_arch.png
@@ -81,14 +86,14 @@ if [ ! -d "$(dirname "$file")" ]; then
 	mkdir -p "$(dirname "$file")"
 fi
 cp -nv $file ${file}.orig
-cat <<EOT > $file
+cat <<EOT >$file
 [text]
 lineNumbers=true
 autoBracket=true
 EOT
 
 file=/usr/share/applications/dnNotebookLM.desktop
-cat <<EOT > $file
+cat <<EOT >$file
 [Desktop Entry]
 Type=Application
 Name=NotebookLM
@@ -98,7 +103,7 @@ Categories=LXQt;Network;
 EOT
 
 file=/usr/share/applications/dnGemini.desktop
-cat <<EOT > $file
+cat <<EOT >$file
 [Desktop Entry]
 Type=Application
 Name=Gemini
@@ -108,7 +113,7 @@ Categories=LXQt;Network;
 EOT
 
 file=/usr/share/applications/dnChatgpt.desktop
-cat <<EOT > $file
+cat <<EOT >$file
 [Desktop Entry]
 Type=Application
 Name=Chatgpt
@@ -118,7 +123,7 @@ Categories=LXQt;Network;
 EOT
 
 file=/usr/share/applications/dnChromium-private.desktop
-cat <<EOT > $file
+cat <<EOT >$file
 [Desktop Entry]
 Version=1.0
 Name=Chromium Private

@@ -202,7 +202,7 @@ CHROOT_SCRIPT
 #Check
 LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
 # Installiere meine Applikationen - fix für connman
-apt install -yqq xserver-xorg-core lightdm lightdm-settings slick-greeter lxqt xrdp chromium thunderbird libwebkit2gtk-4.0-37 
+apt install -yqq xserver-xorg-core lightdm lightdm-settings slick-greeter lxqt lxqt-archiver xrdp chromium thunderbird libwebkit2gtk-4.0-37 
 apt install -yqq --no-install-recommends xserver-xorg network-manager-gnome
 apt purge -yqq connman
 apt install -yqq

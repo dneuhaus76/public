@@ -11,13 +11,16 @@ echo text
 #read -p "Continue (y/n): " continue_response
 '
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd $SCRIPT_DIR
+
 export myDebugMode="n"
 export myUsername="benutzer"
 export myComputername="lxqtdebian"
 export myPageFile="3G"
 export mySite="http://ftp.ch.debian.org/debian/"
 export LANG="de_CH.UTF-8"
-export LANGUAGE="de_CH:de"
+export LANGUAGE="de"
 export DEBIAN_FRONTEND=noninteractive
 
 # disable ipv6 during this installation
@@ -53,9 +56,11 @@ bash
 
 function NewDiskSchema() {
     # Unmount partitions
-    umount -l "${myPartPrefix}1"
-    umount -l "${myPartPrefix}2"
-
+    #umount -l "${myPartPrefix}1"
+    #umount -l "${myPartPrefix}2"
+    umount -l ${myPartPrefix}* 2
+	sleep 2s
+	
     # Cleanup bootsector
     dd if=/dev/zero of="${myDev}" bs=512 count=1
 
@@ -79,11 +84,13 @@ q   # Quit
 EOT
 
     # Format partitions
+    sleep 2s
     mkfs.vfat "${myPartPrefix}1"
     mkfs.ext4 -F "${myPartPrefix}2"
 
     # Mount partitions for installation
     mount "${myPartPrefix}2" /mnt
+    sleep 2s
     mkdir -p /mnt/boot/efi
     mount "${myPartPrefix}1" /mnt/boot/efi
 
@@ -130,6 +137,9 @@ mount --rbind /dev /mnt/dev
 # treiber von live cd kopieren
 cp -r /lib/firmware /mnt/lib/firmware
 cp -r /lib/modules /mnt/lib/modules
+#mount --rbind /lib/firmware /mnt/lib/firmware
+#mount --rbind /lib/modules /mnt/lib/modules
+cp -v $SCRIPT_DIR/myPreferencesLXQT.sh /mnt/
 
 # Chroote in das Debian-System
 LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
@@ -139,7 +149,7 @@ echo "${LANG} UTF-8" >> /etc/locale.gen
 cat <<EOT >/etc/default/locale
 LANG="${LANG}"
 LANGUAGE="${LANGUAGE}"
-EOT 
+EOT
 
 # hostname
 echo "${myComputername}" >/etc/hostname
@@ -161,9 +171,7 @@ EOT
 # sources
 cat <<EOT >/etc/apt/sources.list
 deb ${mySite} ${myDist} main non-free-firmware
-deb-src ${mySite} ${myDist} main non-free-firmware
 deb http://security.debian.org/debian-security/ ${myDist}-security main non-free-firmware
-deb-src http://security.debian.org/debian-security/ ${myDist}-security main non-free-firmware
 EOT
 
 # Aktualisiere apt
@@ -202,7 +210,7 @@ CHROOT_SCRIPT
 #Check
 LANG=$LANG chroot /mnt /bin/bash <<CHROOT_SCRIPT
 # Installiere meine Applikationen - fix für connman
-apt install -yqq xserver-xorg-core lightdm lightdm-settings slick-greeter lxqt lxqt-archiver xrdp chromium thunderbird libwebkit2gtk-4.0-37 
+apt install -yqq xserver-xorg-core lightdm lightdm-settings slick-greeter lxqt xrdp chromium thunderbird libwebkit2gtk-4.0-37 
 apt install -yqq --no-install-recommends xserver-xorg network-manager-gnome
 apt purge -yqq connman
 apt install -yqq
@@ -228,6 +236,8 @@ polkit.addRule(function(action, subject) {
 });
 EOT
 
+bash /myPreferencesLXQT.sh
+
 #Checks
 echo; cat /etc/apt/sources.list
 echo
@@ -249,7 +259,7 @@ NewOSInstall
 MyDebianChroot
 
 # Cleanup
-umount -R /mnt
+umount -Rl /mnt
 
 #Check
 #read -p "poweroff? (y/n): " continue_response

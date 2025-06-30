@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Start Install Script
+Exec=sudo bash /mnt/files/debian_xServer.sh
+NoDisplay=false
+Terminal=true
+Type=Application

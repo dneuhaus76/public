@@ -77,6 +77,9 @@ WallpaperMode=zoom
 [FolderView]
 Mode=detailed
 
+[System]
+Archiver=lxqt-archiver
+
 [Window]
 PathBarButtons=false
 EOT
